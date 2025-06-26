@@ -1,25 +1,44 @@
 name: Test
-on: push
+
+
+
+on:
+  pull_request:  # Запускать при создании pull request
+
 jobs:
-  lint:
-    runs-on: ubuntu-latest # на чем запускается
+  test:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'   # Укажите версию Python
+          python-version: '3.7'
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Run tests
+      - name: Run unit tests
         run: |
-          pytest
+          pytest tests
 
+      - name: Run mypy
+        run: |
+          mypy src/
 
+      - name: Run black
+        run: |
+          black --diff --check src/
+
+      - name: Run isort
+        run: |
+          isort --check-only --diff src/
+
+      - name: Run flake8
+        run: |
+          flake8 src/
 
 
