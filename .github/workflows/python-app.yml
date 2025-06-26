@@ -1,39 +1,13 @@
-workflow:
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+name: Test
+on: push
+jobs:
+  lint:
+    runs-: ubuntu-latest # на чем запускается
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install deps
+        run: npm ci
+      - name: Lint
+        run: npm run lint
 
-
-image: python:3.7
-
-stages:
-  - test
-
-
-before_script:
-    - pip install -r requirements.txt
-
-
-unittest:
-    stage: test
-    script:
-        - pytest tests
-
-mypy:
-    stage: test
-    script:
-        - mypy src/
-
-black:
-    stage: test
-    script:
-        - black --diff --check src/
-
-isort:
-    stage: test
-    script:
-        - isort --check-only --diff src/
-
-flake8:
-    stage: test
-    script:
-        - flake8 src/
